@@ -2,7 +2,7 @@
 
 export interface ConversationMessage {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: number;
   metadata?: {
@@ -19,7 +19,7 @@ export interface ConversationEdit {
   editType: string;
   targetFiles: string[];
   confidence: number;
-  outcome: 'success' | 'partial' | 'failed';
+  outcome: "success" | "partial" | "failed";
   errorMessage?: string;
 }
 
@@ -36,7 +36,7 @@ export interface ConversationContext {
     }>;
   };
   userPreferences: {
-    editStyle?: 'targeted' | 'comprehensive'; // How the user prefers edits
+    editStyle?: "targeted" | "comprehensive"; // How the user prefers edits
     commonRequests?: string[]; // Common patterns in user requests
     packagePreferences?: string[]; // Commonly used packages
   };
