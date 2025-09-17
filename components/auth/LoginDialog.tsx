@@ -39,7 +39,7 @@ export default function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
 
   return (
     <Modal
-      title="Welcome back"
+      title={<div className="text-lg font-semibold">Welcome back</div>}
       open={isOpen}
       onCancel={onClose}
       footer={null}
