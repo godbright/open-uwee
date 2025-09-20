@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter, Roboto_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import { AuthProvider } from "@/lib/auth-context";
+import { Toaster } from "sonner";
+import { AlertProvider } from "@/components/ui/alert-system";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -38,7 +41,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${geistSans.variable} ${geistMono.variable} ${robotoMono.variable} font-sans`}>
-        {children}
+        <AlertProvider>
+          <AuthProvider>
+            {children}
+            <Toaster position="bottom-right" richColors />
+          </AuthProvider>
+        </AlertProvider>
       </body>
     </html>
   );

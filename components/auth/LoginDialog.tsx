@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Modal, Form, Input, Button, Divider } from "antd";
+import { Modal, Form, Input, Button, Divider, message } from "antd";
 import { GoogleOutlined, GithubOutlined } from "@ant-design/icons";
+import { useAuth } from "@/lib/auth-context";
 
 interface LoginDialogProps {
   isOpen: boolean;
   onClose: () => void;
+  onSwitchToSignup?: () => void;
 }
 
 interface FormValues {
@@ -14,27 +16,43 @@ interface FormValues {
   password: string;
 }
 
-export default function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
+export default function LoginDialog({ isOpen, onClose, onSwitchToSignup }: LoginDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [form] = Form.useForm();
+  const { signIn, signInWithGoogle, signInWithGitHub } = useAuth();
 
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
 
-    // TODO: Implement actual login logic
-    console.log("Login with:", values);
-
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const { error } = await signIn(values.email, values.password);
+      
+      if (error) {
+        message.error(error.message || "Failed to sign in");
+      } else {
+        // Success message is now handled by the auth context
+        onClose();
+        form.resetFields();
+      }
+    } catch (error) {
+      message.error("An unexpected error occurred");
+    } finally {
       setIsLoading(false);
-      onClose();
-      form.resetFields();
-    }, 1000);
+    }
   };
 
-  const handleSocialLogin = (provider: "google" | "github") => {
-    // TODO: Implement social login
-    console.log(`Login with ${provider}`);
+  const handleSocialLogin = async (provider: "google" | "github") => {
+    try {
+      const { error } = provider === "google" 
+        ? await signInWithGoogle()
+        : await signInWithGitHub();
+      
+      if (error) {
+        message.error(error.message || `Failed to sign in with ${provider}`);
+      }
+    } catch (error) {
+      message.error("An unexpected error occurred");
+    }
   };
 
   return (
@@ -114,7 +132,10 @@ export default function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
 
       <p className="mt-6 text-center text-sm text-gray-600">
         Don't have an account?{" "}
-        <button className="text-orange-600 hover:text-orange-500 font-medium">
+        <button 
+          className="text-orange-600 hover:text-orange-500 font-medium"
+          onClick={onSwitchToSignup}
+        >
           Sign up
         </button>
       </p>

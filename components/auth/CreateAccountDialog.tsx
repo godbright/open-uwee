@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Modal, Form, Input, Button, Row, Col, Divider } from "antd";
+import { Modal, Form, Input, Button, Row, Col, Divider, message } from "antd";
 import { GoogleOutlined, GithubOutlined } from "@ant-design/icons";
+import { useAuth } from "@/lib/auth-context";
 
 interface CreateAccountDialogProps {
   isOpen: boolean;
   onClose: () => void;
+  onSwitchToLogin?: () => void;
 }
 
 interface FormValues {
@@ -19,27 +21,44 @@ interface FormValues {
 export default function CreateAccountDialog({
   isOpen,
   onClose,
+  onSwitchToLogin,
 }: CreateAccountDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [form] = Form.useForm();
+  const { signUp, signInWithGoogle, signInWithGitHub } = useAuth();
 
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
 
-    // TODO: Implement actual signup logic
-    console.log("Create account with:", values);
-
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const { error } = await signUp(values.email, values.password, values.firstName, values.lastName);
+      
+      if (error) {
+        message.error(error.message || "Failed to create account");
+      } else {
+        // Success message is now handled by the auth context
+        onClose();
+        form.resetFields();
+      }
+    } catch (error) {
+      message.error("An unexpected error occurred");
+    } finally {
       setIsLoading(false);
-      onClose();
-      form.resetFields();
-    }, 1000);
+    }
   };
 
-  const handleSocialSignup = (provider: "google" | "github") => {
-    // TODO: Implement social signup
-    console.log(`Sign up with ${provider}`);
+  const handleSocialSignup = async (provider: "google" | "github") => {
+    try {
+      const { error } = provider === "google" 
+        ? await signInWithGoogle()
+        : await signInWithGitHub();
+      
+      if (error) {
+        message.error(error.message || `Failed to sign up with ${provider}`);
+      }
+    } catch (error) {
+      message.error("An unexpected error occurred");
+    }
   };
 
   return (
@@ -147,7 +166,10 @@ export default function CreateAccountDialog({
 
       <p className="mt-6 text-center text-sm text-gray-600">
         Already have an account?{" "}
-        <button className="text-orange-600 hover:text-orange-500 font-medium">
+        <button 
+          className="text-orange-600 hover:text-orange-500 font-medium"
+          onClick={onSwitchToLogin}
+        >
           Sign in
         </button>
       </p>

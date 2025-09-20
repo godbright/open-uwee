@@ -1,17 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { cn } from "@/utils/cn";
-import ButtonUI from "@/components/ui/shadcn/button";
-import { HiGlobeAlt } from "react-icons/hi2";
-import { Globe } from "lucide-react";
-import LoginDialog from "@/components/auth/LoginDialog";
-import CreateAccountDialog from "@/components/auth/CreateAccountDialog";
+import AuthButton from "@/components/auth/AuthButton";
 
 export default function Base44Header() {
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isCreateAccountOpen, setIsCreateAccountOpen] = useState(false);
 
   return (
     <>
@@ -59,33 +52,13 @@ export default function Base44Header() {
               </Link>
             </nav>
 
-            {/* Right side - Language selector and CTA */}
+            {/* Right side - Authentication */}
             <div className="flex items-center space-x-4">
-              {/* Login button */}
-              <button
-                onClick={() => setIsLoginOpen(true)}
-                className="rounded-full text-black border px-20 py-10 hover:bg-gray-50 transition-colors"
-              >
-                Login
-              </button>
-              {/* Create Account CTA Button */}
-              <button
-                onClick={() => setIsCreateAccountOpen(true)}
-                className="rounded-full bg-[#ebffb1] text-black border px-20 py-10 hover:bg-[#d9ff8c] transition-colors"
-              >
-                Create Account
-              </button>
+              <AuthButton />
             </div>
           </div>
         </div>
       </header>
-
-      {/* Dialogs */}
-      <LoginDialog isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
-      <CreateAccountDialog
-        isOpen={isCreateAccountOpen}
-        onClose={() => setIsCreateAccountOpen(false)}
-      />
     </>
   );
 }
