@@ -1,19 +1,10 @@
 "use client";
 
-import Base44Header from "@/components/Base44Header";
-import Base44Hero from "@/components/Base44Hero";
-
-export default function HomePage() {
-  return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <Base44Header />
-      
-      {/* Hero Section */}
-      <Base44Hero />
-    </div>
-  );
-}
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { toast } from "sonner";
+import { appConfig } from "@/config/app.config";
 
 // Import shared components
 import { Connector } from "@/components/shared/layout/curvy-rect";
